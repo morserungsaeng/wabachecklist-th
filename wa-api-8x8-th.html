@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Business API — คู่มือการติดตั้ง | 8x8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --dark-grey:#3A3A38;
+    --off-white:#EBEAE1;
+    --white:#FFFFFF;
+    --teal-vivid:#8EBEB1;
+    --teal-deep:#04888A;
+    --green-vivid:#C9DC50;
+    --green-deep:#72AD6C;
+    --orange-vivid:#FFB500;
+    --orange-deep:#F37944;
+    --purple-vivid:#D28DD3;
+    --purple-deep:#816AAE;
+    --border:#DAD8CC;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Archivo', Arial, sans-serif;
+    background:var(--off-white);
+    color:var(--dark-grey);
+    line-height:1.55;
+  }
+  a{color:var(--teal-deep); text-decoration:underline;}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 80px;}
+
+  /* Top bar */
+  .topbar{
+    background:var(--dark-grey); color:var(--white);
+    padding:14px 20px;
+  }
+  .topbar-inner{max-width:920px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;}
+  .logo{font-weight:800; font-size:20px; letter-spacing:0.5px;}
+  .logo sup{font-size:11px;}
+  .progress-shell{flex:1; min-width:180px; max-width:320px;}
+  .progress-track{background:#55554f; border-radius:20px; height:8px; overflow:hidden;}
+  .progress-fill{background:var(--teal-vivid); height:100%; width:0%; transition:width .4s ease;}
+  .progress-label{font-size:12px; color:var(--off-white); margin-top:4px; text-align:right;}
+
+  /* Stepper */
+  .stepper{display:flex; gap:8px; margin:24px 0; flex-wrap:wrap;}
+  .step-pill{
+    display:flex; align-items:center; gap:8px;
+    background:var(--white); border:1px solid var(--border); border-radius:999px;
+    padding:8px 14px; font-size:13px; cursor:default; opacity:.55;
+  }
+  .step-pill.active{border-color:var(--teal-deep); color:var(--teal-deep); opacity:1; font-weight:700;}
+  .step-pill.done{opacity:1; cursor:pointer;}
+  .step-pill.done:hover{border-color:var(--teal-deep);}
+  .step-num{
+    width:22px; height:22px; border-radius:50%; background:var(--dark-grey); color:var(--white);
+    display:flex; align-items:center; justify-content:center; font-size:12px; flex-shrink:0;
+  }
+  .step-pill.active .step-num{background:var(--teal-deep);}
+
+  /* Hero */
+  .hero{padding:36px 0 8px;}
+  .eyebrow{color:var(--teal-deep); font-weight:700; letter-spacing:.5px; font-size:13px; text-transform:uppercase;}
+  .hero h1{font-size:36px; font-weight:800; margin:10px 0 14px; line-height:1.15;}
+  .hero p{font-size:16px; max-width:640px;}
+  .cta-btn{
+    background:var(--teal-deep); color:var(--white); border:none; border-radius:10px;
+    padding:14px 26px; font-size:15px; font-weight:700; cursor:pointer; margin-top:18px;
+  }
+  .cta-btn:hover{background:#036b6c;}
+  .cta-btn:disabled{background:#b7b6ac; cursor:not-allowed;}
+  .cta-sub{font-size:13px; color:#666; margin-top:8px;}
+  .stat-row{display:flex; gap:22px; flex-wrap:wrap; margin:28px 0;}
+  .stat{min-width:110px;}
+  .stat .num{font-size:26px; font-weight:800; color:var(--teal-deep);}
+  .stat .lbl{font-size:12px; color:#666;}
+
+  /* Panels */
+  .panel{display:none;}
+  .panel.active{display:block;}
+  .card-section{margin:26px 0;}
+  h2.step-title{font-size:24px; margin:0 0 4px;}
+  .step-desc{color:#555; margin:0 0 20px; max-width:680px;}
+
+  .path-tabs{display:flex; gap:10px; margin-bottom:20px; flex-wrap:wrap;}
+  .path-tab{
+    flex:1; min-width:220px; background:var(--white); border:2px solid var(--border); border-radius:var(--radius);
+    padding:16px; cursor:pointer; text-align:left;
+  }
+  .path-tab.selected{border-color:var(--teal-deep); background:#eef7f6;}
+  .path-tab .emoji{font-size:20px;}
+  .path-tab .t{font-weight:700; margin:6px 0 2px;}
+  .path-tab .s{font-size:13px; color:#666;}
+
+  .feature-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:14px; margin:18px 0;}
+  .feature-card{background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
+  .feature-card .icon{font-size:20px;}
+  .feature-card h4{margin:8px 0 4px; font-size:15px;}
+  .feature-card p{margin:0; font-size:13.5px; color:#555;}
+  .tag{display:inline-block; font-size:11px; background:var(--off-white); border-radius:6px; padding:2px 8px; margin:8px 4px 0 0; color:var(--dark-grey);}
+
+  .callout{
+    border-radius:var(--radius); padding:14px 16px; font-size:14px; margin:16px 0;
+    background:#fff4e5; border:1px solid var(--orange-vivid);
+  }
+  .callout.critical{background:#ffe9e5; border-color:var(--orange-deep);}
+
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; background:var(--white); border-radius:var(--radius); overflow:hidden;}
+  table th, table td{padding:10px 12px; border-bottom:1px solid var(--border); text-align:left;}
+  table th{background:var(--dark-grey); color:var(--white); font-weight:700;}
+
+  .check-group{background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin:14px 0;}
+  .check-group-head{display:flex; justify-content:space-between; align-items:center; font-weight:700; margin-bottom:10px;}
+  .check-count{font-size:12px; color:var(--teal-deep); font-weight:700;}
+  .check-item{display:flex; gap:10px; padding:10px 0; border-top:1px solid #f0efe8;}
+  .check-item:first-of-type{border-top:none;}
+  .check-item input{margin-top:3px; width:16px; height:16px;}
+  .check-item .ttl{font-weight:600; font-size:14px;}
+  .check-item .dsc{font-size:13px; color:#666; margin-top:2px;}
+  .badge-req{font-size:10px; background:var(--purple-vivid); color:var(--dark-grey); border-radius:6px; padding:2px 6px; margin-left:6px;}
+  .badge-rec{font-size:10px; background:var(--green-vivid); color:var(--dark-grey); border-radius:6px; padding:2px 6px; margin-left:6px;}
+  .badge-crit{font-size:10px; background:var(--orange-deep); color:var(--white); border-radius:6px; padding:2px 6px; margin-left:6px;}
+
+  .setup-step{background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px; margin:12px 0; display:flex; gap:14px;}
+  .setup-step .num{
+    width:32px; height:32px; border-radius:50%; background:var(--teal-vivid); color:var(--dark-grey);
+    display:flex; align-items:center; justify-content:center; font-weight:800; flex-shrink:0;
+  }
+  .setup-step h4{margin:0 0 4px;}
+  .setup-step .meta{font-size:12px; color:var(--teal-deep); font-weight:700; margin-top:6px;}
+
+  .faq-item{background:var(--white); border:1px solid var(--border); border-radius:var(--radius); margin:10px 0; overflow:hidden;}
+  .faq-q{padding:14px 16px; cursor:pointer; display:flex; justify-content:space-between; font-weight:700; align-items:center;}
+  .faq-a{padding:0 16px; max-height:0; overflow:hidden; transition:max-height .25s ease; font-size:14px; color:#555;}
+  .faq-item.open .faq-a{padding-bottom:14px;}
+
+  .resource-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:14px; margin:16px 0;}
+  .resource-card{background:var(--white); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
+  .resource-card .k{font-size:11px; color:var(--teal-deep); font-weight:700; text-transform:uppercase;}
+  .resource-card h4{margin:6px 0 4px;}
+  .resource-card p{margin:0 0 10px; font-size:13px; color:#666;}
+
+  .nav-row{display:flex; justify-content:space-between; margin-top:28px;}
+  .btn-secondary{background:var(--white); border:1px solid var(--dark-grey); border-radius:10px; padding:12px 20px; font-weight:700; cursor:pointer;}
+  .btn-primary{background:var(--teal-deep); color:var(--white); border:none; border-radius:10px; padding:12px 20px; font-weight:700; cursor:pointer;}
+  .btn-primary:disabled{background:#b7b6ac; cursor:not-allowed;}
+
+  .lock-note{font-size:13px; color:#777; margin-top:16px;}
+  .done-banner{background:#eef7f6; border:1px solid var(--teal-vivid); border-radius:var(--radius); padding:16px; margin:20px 0; font-weight:700; color:var(--teal-deep);}
+
+  footer{background:var(--dark-grey); color:var(--off-white); text-align:center; padding:20px; font-size:13px; margin-top:40px;}
+  footer a{color:var(--teal-vivid);}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="logo">8x8<sup>®</sup></div>
+    <div class="progress-shell">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0% เสร็จสมบูรณ์</div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="stepper" id="stepper"></div>
+
+  <!-- STEP 1 -->
+  <section class="panel active" data-step="1">
+    <div class="hero">
+      <div class="eyebrow">WhatsApp Business API · 8x8 CPaaS</div>
+      <h1>เริ่มใช้งาน WhatsApp พร้อม 8x8</h1>
+      <p>คู่มือฉบับสมบูรณ์ — ไม่ว่าคุณจะเปิดใช้งานเบอร์ใหม่ หรือย้าย WABA เดิมจาก BSP อื่น ทำเช็คลิสต์ให้ครบเพื่อปลดล็อกแต่ละขั้นตอน</p>
+      <div class="stat-row">
+        <div class="stat"><div class="num">2</div><div class="lbl">เส้นทางการติดตั้ง</div></div>
+        <div class="stat"><div class="num">3–7</div><div class="lbl">วัน · เปิดใช้งานใหม่</div></div>
+        <div class="stat"><div class="num">~1</div><div class="lbl">วัน · ย้ายระบบ</div></div>
+        <div class="stat"><div class="num">∞</div><div class="lbl">Tier 4 · ไม่จำกัด</div></div>
+      </div>
+      <button class="cta-btn" onclick="goStep(1,true)">▶ เริ่มคู่มือ</button>
+      <div class="cta-sub">ใช้เวลาประมาณ 5–10 นาที</div>
+    </div>
+
+    <div class="card-section">
+      <h2 class="step-title">ขั้นตอนที่ 1 จาก 6 — เลือกเส้นทางการติดตั้ง</h2>
+      <p class="step-desc">ขั้นตอนการติดตั้งจะแตกต่างกันไป ขึ้นอยู่กับว่าคุณต้องการเปิดใช้งานเบอร์ใหม่ หรือย้าย WABA เดิมจาก BSP อื่นมาที่ 8x8</p>
+
+      <div class="path-tabs">
+        <div class="path-tab" id="tab-new" onclick="selectPath('new')">
+          <div class="emoji">🆕</div>
+          <div class="t">เปิดใช้งานใหม่</div>
+          <div class="s">เบอร์ใหม่ · 3–7 วันทำการ</div>
+        </div>
+        <div class="path-tab" id="tab-migration" onclick="selectPath('migration')">
+          <div class="emoji">🔄</div>
+          <div class="t">ย้าย WABA</div>
+          <div class="s">คงเบอร์เดิม · ~1 วันทำการ</div>
+        </div>
+      </div>
+
+      <div class="feature-grid" id="path1-features"></div>
+
+      <div class="callout critical" id="path1-callout" style="display:none;"></div>
+
+      <table>
+        <tr><th>ปัจจัย</th><th>การย้ายระบบ</th><th>เปิดใช้งานใหม่</th></tr>
+        <tr><td>เบอร์โทรศัพท์</td><td>คงเบอร์เดิม</td><td>ต้องใช้เบอร์ใหม่</td></tr>
+        <tr><td>WABA ID</td><td>ใช้ ID เดิม</td><td>ได้รับ ID ใหม่</td></tr>
+        <tr><td>ระดับการส่งข้อความ (Tier)</td><td>ยกมาจากเดิม</td><td>เริ่มที่ Tier 1</td></tr>
+        <tr><td>เทมเพลตที่อนุมัติแล้ว</td><td>ยังใช้ได้</td><td>ต้องสร้างใหม่ทั้งหมด</td></tr>
+        <tr><td>คะแนนคุณภาพ (Quality Rating)</td><td>ยกมาจากเดิม</td><td>เริ่มต้นใหม่</td></tr>
+        <tr><td>การประสานงานกับ BSP เดิม</td><td>ต้องทำ (ปิด 2FA)</td><td>ไม่ต้อง</td></tr>
+        <tr><td>ความเสี่ยงเรื่อง Downtime</td><td>ต่ำ (~ไม่กี่นาที)</td><td>ไม่มี</td></tr>
+        <tr><td>ระยะเวลาโดยทั่วไป</td><td>~1 วันทำการ</td><td>3–7 วันทำการ</td></tr>
+      </table>
+
+      <p class="lock-note">เลือกเส้นทางของคุณด้านบน แล้วไปต่อ — การเลือกนี้จะปรับเช็คลิสต์และขั้นตอนถัดไปให้ตรงกับเส้นทางที่เลือก</p>
+    </div>
+
+    <div class="nav-row">
+      <span></span>
+      <button class="btn-primary" id="btn-continue-1" disabled onclick="goStep(2)">ไปต่อ: เช็คลิสต์ก่อนเริ่ม →</button>
+    </div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="panel" data-step="2">
+    <h2 class="step-title">ขั้นตอนที่ 2 จาก 6 — เช็คลิสต์ก่อนเริ่ม</h2>
+    <p class="step-desc">ทำเครื่องหมายในรายการที่คุณเตรียมพร้อมแล้ว ทุกรายการที่จำเป็นต้องถูกยืนยันก่อนไปยังขั้นตอนการติดตั้ง</p>
+    <div id="prereq-groups"></div>
+    <div class="lock-note" id="prereq-lock">⏳ ทำรายการด้านบนให้ครบเพื่อปลดล็อกขั้นตอนการติดตั้ง</div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goStep(1)">← ย้อนกลับ</button>
+      <button class="btn-primary" id="btn-continue-2" disabled onclick="goStep(3)">ไปต่อ: ขั้นตอนการติดตั้ง →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="panel" data-step="3">
+    <h2 class="step-title">ขั้นตอนที่ 3 จาก 6 — ขั้นตอนการติดตั้ง</h2>
+    <p class="step-desc">ทำตามขั้นตอนต่อไปนี้ตามลำดับสำหรับเส้นทางที่คุณเลือก อย่าข้ามขั้นตอน เพราะแต่ละขั้นขึ้นอยู่กับขั้นก่อนหน้า</p>
+    <div id="setup-steps"></div>
+    <div class="done-banner">✅ ตรวจสอบขั้นตอนเรียบร้อย — ถัดไป: สำรวจฟีเจอร์ ระดับการส่งข้อความ และคะแนนคุณภาพ</div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goStep(2)">← ย้อนกลับ</button>
+      <button class="btn-primary" onclick="goStep(4)">ไปต่อ: ฟีเจอร์ →</button>
+    </div>
+  </section>
+
+  <!-- STEP 4 -->
+  <section class="panel" data-step="4">
+    <h2 class="step-title">ขั้นตอนที่ 4 จาก 6 — ฟีเจอร์ & ระดับการส่งข้อความ</h2>
+    <p class="step-desc">ภาพรวมสิ่งที่คุณจะได้ใช้งานทั้งหมด เมื่อเปิดใช้งาน WhatsApp Business API ผ่าน 8x8 เรียบร้อยแล้ว</p>
+
+    <div class="feature-grid">
+      <div class="feature-card"><div class="icon">📩</div><h4>เทมเพลตข้อความ (Message Templates)</h4><p>ต้องได้รับการอนุมัติจาก Meta ก่อน ใช้สำหรับข้อความที่ธุรกิจเริ่มส่งเองนอกเวลา 24 ชั่วโมง มี 3 หมวด: Authentication, Utility, Marketing ค่าเริ่มต้น 250 เทมเพลตต่อ WABA (6,000 เมื่อได้ OBA)</p>
+        <span class="tag">Auth</span><span class="tag">Utility</span><span class="tag">Marketing</span></div>
+      <div class="feature-card"><div class="icon">💬</div><h4>ช่วงเวลาบริการ 24 ชั่วโมง</h4><p>เมื่อลูกค้าทักมาก่อน จะเปิดช่วงสนทนาฟรี 24 ชั่วโมง — ตอบกลับได้อิสระด้วยข้อความ รูปภาพ เสียง โดยไม่มีค่าใช้จ่ายเพิ่ม เทมเพลต Utility ในช่วงนี้ก็ฟรีเช่นกัน นับเวลาใหม่ทุกครั้งที่ลูกค้าตอบกลับ</p>
+        <span class="tag">ส่งข้อความฟรี</span></div>
+      <div class="feature-card"><div class="icon">🔘</div><h4>ปุ่ม Quick Reply & CTA</h4><p>สูงสุด 10 ปุ่ม Quick Reply ต่อเทมเพลต รองรับ: ไปที่เว็บไซต์ (สูงสุด 2), โทรออก (สูงสุด 1), คัดลอกโค้ดส่วนลด (สูงสุด 1), และ Flow (สูงสุด 1)</p>
+        <span class="tag">Quick Reply</span><span class="tag">CTA</span><span class="tag">Flow</span></div>
+      <div class="feature-card"><div class="icon">🖼️</div><h4>สื่อริชและ Carousel</h4><p>ส่งรูปภาพ วิดีโอ PDF เสียง และเอกสารได้ Carousel แสดงได้สูงสุด 10 การ์ดเลื่อนได้ พร้อมรูปภาพ ข้อความ และปุ่มของตัวเอง — เหมาะสำหรับโชว์สินค้า</p></div>
+      <div class="feature-card"><div class="icon">🔄</div><h4>WhatsApp Flows</h4><p>สร้างฟอร์มในแชทแบบ native หลายหน้าจอ พร้อมช่องกรอกข้อความ dropdown ตัวเลือกวันที่ และการตรวจสอบข้อมูล — เหมาะสำหรับลงทะเบียน แบบสำรวจ และจองนัด</p>
+        <span class="tag">ฟอร์ม</span><span class="tag">หลายหน้าจอ</span><span class="tag">เก็บข้อมูล</span></div>
+      <div class="feature-card"><div class="icon">🤖</div><h4>AI Agent & อัตโนมัติ</h4><p>ติดตั้ง AI agent ให้ทักทายลูกค้า ตอบคำถามทั่วไป และส่งต่อไปยังเจ้าหน้าที่จริงได้ ทั้งหมดในแชท WhatsApp — ตอบ FAQ คัดกรองลีด และรับคำขอบริการได้ตลอด 24 ชั่วโมง</p></div>
+      <div class="feature-card"><div class="icon">📊</div><h4>Marketing Messages API (MM API)</h4><p>ขีดจำกัดการส่งที่ปรับตามการมีส่วนร่วม พร้อมการติดตาม conversion บนเว็บและแอป, click events, ค่าเฉลี่ยมาตรฐาน และ TTL ของข้อความ</p>
+        <span class="tag">ขีดจำกัดแบบไดนามิก</span><span class="tag">Conversion Tracking</span></div>
+      <div class="feature-card"><div class="icon">✅</div><h4>OBA — เครื่องหมายยืนยันสีฟ้า (Blue Tick)</h4><p>สมัครสถานะ Official Business Account ได้หลังไปใช้งานจริง (Go Live) 30 วัน สร้างความน่าเชื่อถือ เพิ่มอัตราการเปิดอ่าน และปลดล็อกเทมเพลตจาก 250 เป็น 6,000 ต่อ WABA ระยะเวลาตรวจสอบของ Meta: 2 วันทำการถึงหลายสัปดาห์</p>
+        <span class="tag">สมัครได้หลัง Go Live 30 วัน</span></div>
+    </div>
+
+    <h3 style="margin-top:30px;">ระดับการส่งข้อความ (Tiers) & คะแนนคุณภาพ</h3>
+    <div class="feature-grid">
+      <div class="feature-card"><div class="num" style="font-size:22px; font-weight:800; color:var(--teal-deep);">2K</div><p>ผู้ใช้ไม่ซ้ำ/วัน — Tier 1 (ค่าเริ่มต้น)</p></div>
+      <div class="feature-card"><div class="num" style="font-size:22px; font-weight:800; color:var(--teal-deep);">10K</div><p>ผู้ใช้ไม่ซ้ำ/วัน — Tier 2 (อัปเกรดอัตโนมัติ)</p></div>
+      <div class="feature-card"><div class="num" style="font-size:22px; font-weight:800; color:var(--teal-deep);">100K</div><p>ผู้ใช้ไม่ซ้ำ/วัน — Tier 3</p></div>
+      <div class="feature-card"><div class="num" style="font-size:22px; font-weight:800; color:var(--teal-deep);">∞</div><p>ผู้ใช้ไม่ซ้ำ/วัน — Tier 4 (ไม่จำกัด)</p></div>
+    </div>
+    <div class="callout">💡 WABA ใหม่จะเริ่มที่ Tier 1 ส่วน WABA ที่ย้ายมาจะคง Tier เดิมไว้ Tier จะอัปเกรดอัตโนมัติตามปริมาณและคุณภาพการส่งข้อความ 🟢 GREEN = คุณภาพดี · 🟡 YELLOW = คำเตือน (ต้องดำเนินการภายใน 7 วัน) · 🔴 RED = คุณภาพต่ำ อาจถูกลด Tier</div>
+
+    <div class="done-banner">✅ ตรวจสอบฟีเจอร์เรียบร้อย — ถัดไป: ปัญหาที่พบบ่อยและรหัสข้อผิดพลาด</div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goStep(3)">← ย้อนกลับ</button>
+      <button class="btn-primary" onclick="goStep(5)">ไปต่อ: ปัญหาที่พบบ่อย →</button>
+    </div>
+  </section>
+
+  <!-- STEP 5 -->
+  <section class="panel" data-step="5">
+    <h2 class="step-title">ขั้นตอนที่ 5 จาก 6 — ปัญหาที่พบบ่อย & รหัสข้อผิดพลาด</h2>
+    <p class="step-desc">ปัญหาที่ลูกค้าพบบ่อยที่สุด และวิธีแก้ไขอย่างรวดเร็ว</p>
+    <div id="blockers"></div>
+
+    <h3 style="margin-top:26px;">อ้างอิงรหัสข้อผิดพลาด (Error Codes)</h3>
+    <table>
+      <tr><th>รหัสข้อผิดพลาด</th><th>ความหมาย</th><th>วิธีแก้ไข</th></tr>
+      <tr><td>131026</td><td>เบอร์โทรศัพท์ไม่ได้ลงทะเบียนบน WhatsApp</td><td>ตรวจสอบว่าผู้รับเป็นผู้ใช้ WhatsApp ที่ยังใช้งานอยู่ ผ่าน wa.me/[เบอร์]</td></tr>
+      <tr><td>470</td><td>เทมเพลตยังไม่ได้รับอนุมัติหรือถูกพักใช้</td><td>ตรวจสถานะเทมเพลตใน 8x8 Connect ส่งใหม่หากถูกปฏิเสธ ห้ามลองส่งซ้ำเทมเพลตที่ถูกพักใช้</td></tr>
+      <tr><td>131047</td><td>ช่วงเวลาบริการ 24 ชั่วโมงหมดอายุ</td><td>ใช้เทมเพลตที่ได้รับอนุมัติแล้วเพื่อเริ่มสนทนาใหม่ ไม่สามารถส่งข้อความอิสระนอกช่วงเวลานี้ได้</td></tr>
+      <tr><td>130429</td><td>เกินขีดจำกัดของ Tier การส่งข้อความ</td><td>ลดความเร็วในการส่ง ตรวจสอบ Tier และคะแนนคุณภาพใน Meta BM อย่าลองส่งซ้ำโดยไม่ตรวจสอบ</td></tr>
+      <tr><td>131000</td><td>ข้อผิดพลาดทั่วไป/ไม่ทราบสาเหตุ</td><td>ลองส่งคำขอใหม่ หากยังพบปัญหา ตรวจสอบ Meta Status Page และแจ้งทีมซัพพอร์ต</td></tr>
+      <tr><td>1 ติ๊กเทา</td><td>ผู้รับบล็อกเบอร์ของคุณ</td><td>ไม่มีวิธีแก้ — Meta ซ่อนสถานะการบล็อกเพื่อความเป็นส่วนตัว ลองใช้ช่องทางอื่นแทน</td></tr>
+    </table>
+
+    <div class="done-banner">✅ ตรวจสอบปัญหาที่พบบ่อยเรียบร้อย — ขั้นตอนสุดท้าย: คำถามที่พบบ่อยและแหล่งข้อมูล</div>
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goStep(4)">← ย้อนกลับ</button>
+      <button class="btn-primary" onclick="goStep(6)">ไปต่อ: คำถามที่พบบ่อย →</button>
+    </div>
+  </section>
+
+  <!-- STEP 6 -->
+  <section class="panel" data-step="6">
+    <h2 class="step-title">ขั้นตอนที่ 6 จาก 6 — คำถามที่พบบ่อย & แหล่งข้อมูล</h2>
+    <p class="step-desc">คำตอบสำหรับคำถามที่ลูกค้าถามบ่อยที่สุดระหว่างการติดตั้งและย้ายระบบ</p>
+    <div id="faq"></div>
+
+    <h3 style="margin-top:26px;">แหล่งข้อมูลสำคัญ</h3>
+    <div class="resource-grid">
+      <div class="resource-card"><div class="k">คู่มือแบบอินเทอร์แอกทีฟของ 8x8</div><h4>ขั้นตอนการ Embedded Sign-Up</h4><p>คู่มือแบบทีละขั้นตอนสำหรับ WhatsApp Embedded Sign-Up ในพอร์ทัล 8x8 Connect</p><a href="https://8x8.navattic.com/bt10aaf" target="_blank">▶ เปิดคู่มืออินเทอร์แอกทีฟ →</a></div>
+      <div class="resource-card"><div class="k">8x8 Developer Docs</div><h4>คู่มือจัดการเทมเพลต WhatsApp</h4><p>วิธีสร้าง ส่ง และจัดการเทมเพลตข้อความผ่าน 8x8 Connect</p><a href="https://developer.8x8.com/connect/docs/whatsapp-templates-management" target="_blank">📄 อ่านเอกสาร →</a></div>
+      <div class="resource-card"><div class="k">8x8 Developer Docs</div><h4>เอกสาร WhatsApp Business API ฉบับสมบูรณ์</h4><p>ข้อมูลอ้างอิง API ครบถ้วน คู่มือเริ่มต้นใช้งาน Flows, webhooks และอื่นๆ</p><a href="https://developer.8x8.com/connect/docs/whatsapp/whatsapp-hub" target="_blank">📚 ดูเอกสารทั้งหมด →</a></div>
+      <div class="resource-card"><div class="k">Meta อย่างเป็นทางการ</div><h4>วิธีสมัคร OBA (Blue Tick)</h4><p>คู่มือทางการของ Meta สำหรับสมัครสถานะ Official Business Account บน WhatsApp</p><a href="https://www.facebook.com/business/help/2087193751603668" target="_blank">✅ ดูคู่มือ OBA →</a></div>
+      <div class="resource-card"><div class="k">Meta อย่างเป็นทางการ</div><h4>แนวทางการตั้งชื่อที่แสดงผลบน WhatsApp</h4><p>แนวทางอย่างเป็นทางการของ Meta ในการเลือกและขออนุมัติชื่อที่แสดงผล</p><a href="https://www.facebook.com/business/help/757569725593362" target="_blank">📋 ดูแนวทาง →</a></div>
+      <div class="resource-card"><div class="k">Meta Developer Docs</div><h4>รหัสข้อผิดพลาดของ WhatsApp API</h4><p>รายการรหัสข้อผิดพลาดของ WhatsApp Business API ความหมาย และวิธีแก้ไขแบบครบถ้วน</p><a href="https://developers.facebook.com/documentation/business-messaging/whatsapp/support/error-codes" target="_blank">🔧 ดูรหัสข้อผิดพลาด →</a></div>
+    </div>
+
+    <div class="done-banner">🎉 คุณได้อ่านคู่มือครบทุกขั้นตอนแล้ว! พร้อมเริ่มต้นใช้งานหรือยัง? ติดต่อ CSM ของ 8x8 หรือเปิดคู่มืออินเทอร์แอกทีฟเพื่อเริ่ม Sign-Up</div>
+
+    <div class="nav-row">
+      <button class="btn-secondary" onclick="goStep(5)">← ย้อนกลับ</button>
+      <span style="display:flex; gap:10px;">
+        <a class="btn-primary" style="text-decoration:none; display:inline-block;" href="https://8x8.navattic.com/bt10aaf" target="_blank">▶ เริ่ม Sign-Up</a>
+        <a class="btn-secondary" style="text-decoration:none; display:inline-block;" href="mailto:cpaas-support@8x8.com">📧 ติดต่อซัพพอร์ต</a>
+      </span>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  ต้องการความช่วยเหลือ? <a href="mailto:cpaas-support@8x8.com">cpaas-support@8x8.com</a><br>
+  8x8 เป็น BSP ที่ได้รับการรับรองจาก Meta · © 2026 8x8, Inc.
+</footer>
+
+<script>
+const STEP_LABELS = ["เลือกเส้นทาง","เช็คลิสต์","ขั้นตอนติดตั้ง","ฟีเจอร์","ปัญหา & Errors","FAQ"];
+let currentStep = 1;
+let maxUnlocked = 1;
+let selectedPath = 'new'; // 'new' or 'migration'
+const checked = {}; // id -> bool
+
+function renderStepper(){
+  const el = document.getElementById('stepper');
+  el.innerHTML = '';
+  for(let i=1;i<=6;i++){
+    const pill = document.createElement('div');
+    pill.className = 'step-pill' + (i===currentStep?' active':'') + (i<=maxUnlocked?' done':'');
+    pill.innerHTML = `<span class="step-num">${i<maxUnlocked?'✓':i}</span><span>${STEP_LABELS[i-1]}</span>`;
+    if(i<=maxUnlocked) pill.onclick = () => goStep(i);
+    el.appendChild(pill);
+  }
+}
+
+function goStep(n, forceScroll){
+  currentStep = n;
+  if(n>maxUnlocked) maxUnlocked = n;
+  document.querySelectorAll('.panel').forEach(p=>{
+    p.classList.toggle('active', parseInt(p.dataset.step)===n);
+  });
+  renderStepper();
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function updateProgress(){
+  const pct = Math.round((maxUnlocked/6)*100 > (currentStep/6)*100 ? (maxUnlocked/6)*100 : (currentStep/6)*100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = pct + '% เสร็จสมบูรณ์';
+}
+
+/* ---- Step 1: path selection ---- */
+const PATH_FEATURES = {
+  new: [
+    {icon:'📱', title:'เบอร์โทรศัพท์ใหม่', desc:'ต้องใช้เบอร์ใหม่ — ต้องไม่เคยลงทะเบียนบน WhatsApp มาก่อน'},
+    {icon:'🏢', title:'ต้องยืนยัน FBM ครบ 100%', desc:'Meta Business Portfolio ของคุณต้องยืนยันครบ 100% ก่อนใช้งาน Embedded Sign-Up'},
+    {icon:'📊', title:'เริ่มที่ Tier 1 (2,000/วัน)', desc:'WABA ใหม่จะเริ่มที่ Tier 1 เสมอ และอัปเกรดอัตโนมัติตามปริมาณและคะแนนคุณภาพ'},
+    {icon:'📋', title:'ต้องสร้างเทมเพลตใหม่ทั้งหมด', desc:'เนื่องจากเป็น WABA ใหม่ เทมเพลตข้อความทุกรายการต้องส่งและรออนุมัติใหม่บน Meta'}
+  ],
+  migration: [
+    {icon:'📱', title:'คงเบอร์โทรศัพท์เดิม', desc:'เบอร์โทรศัพท์ไม่เปลี่ยน ลูกค้ายังคงเห็นและทักเบอร์เดิมได้ — ไม่มีการรบกวน'},
+    {icon:'⭐', title:'Tier & คะแนนคุณภาพยกมาเดิม', desc:'ระดับการส่งข้อความและคะแนนคุณภาพเดิมจะติดไปกับเบอร์เมื่อย้ายมาที่ 8x8'},
+    {icon:'📋', title:'เทมเพลตที่อนุมัติแล้วยังใช้ได้', desc:'เทมเพลตถูกจัดเก็บที่ระดับเบอร์โทรศัพท์ใน Meta — ย้ายมาโดยอัตโนมัติ'},
+    {icon:'⚡', title:'~1 วันทำการ', desc:'เมื่อ BSP เดิมปิด 2FA แล้ว การย้ายผ่าน 8x8 Connect มักเสร็จภายในไม่กี่นาที'}
+  ]
+};
+const PATH_CALLOUT = {
+  new: null,
+  migration: '🔒 <b>ขั้นตอนสำคัญแรก:</b> BSP เดิมของคุณต้องปิด 2FA บน WABA ก่อนเริ่มการย้าย ประสานงานกับ BSP เดิมก่อนเริ่ม — นี่คือตัวบล็อกอันดับ 1 ของการย้ายระบบ'
+};
+
+function selectPath(p){
+  selectedPath = p;
+  document.getElementById('tab-new').classList.toggle('selected', p==='new');
+  document.getElementById('tab-migration').classList.toggle('selected', p==='migration');
+  const grid = document.getElementById('path1-features');
+  grid.innerHTML = PATH_FEATURES[p].map(f=>`
+    <div class="feature-card"><div class="icon">${f.icon}</div><h4>${f.title}</h4><p>${f.desc}</p></div>
+  `).join('');
+  const callout = document.getElementById('path1-callout');
+  if(PATH_CALLOUT[p]){ callout.style.display='block'; callout.innerHTML = PATH_CALLOUT[p]; }
+  else { callout.style.display='none'; }
+  document.getElementById('btn-continue-1').disabled = false;
+  renderPrereqs();
+  renderSetupSteps();
+  renderBlockers();
+}
+
+/* ---- Step 2: prerequisites ---- */
+const PREREQ_DATA = {
+  new: [
+    {key:'fbm', title:'🏢 Meta Business Portfolio (FBM)', items:[
+      {id:'p_fbm_verified', label:'ยืนยัน Meta Business Portfolio ครบ 100%', desc:'ต้องยืนยันครบถ้วน — การยืนยันไม่ครบจะบล็อกการติดตั้ง ไปที่ Meta BM → Security Center → Start Verification', req:true},
+      {id:'p_fbm_admin', label:'มีสิทธิ์ Admin ใน FBM', desc:'ต้องมีสิทธิ์ Admin ใน Meta Business Manager เพื่อทำ Embedded Sign-Up ให้เสร็จ', req:true},
+      {id:'p_fbm_email', label:'มีอีเมลโดเมนบริษัท', desc:'ใช้อีเมลบริษัท (name@company.com) ไม่ใช่ Gmail หรือ Yahoo จำเป็นสำหรับการยืนยันตัวตนของ Meta', req:true},
+    ], note:'⚠️ การยืนยัน FBM คือตัวบล็อกอันดับ 1 ทำเรื่องนี้ก่อน เตรียมเอกสาร: หนังสือรับรองนิติบุคคล, ใบทะเบียนภาษีมูลค่าเพิ่ม (ภ.พ.20), หรือใบอนุญาตประกอบธุรกิจ'},
+    {key:'phone', title:'📱 เบอร์โทรศัพท์', items:[
+      {id:'p_phone_new', label:'เบอร์ที่ยังไม่เคยลงทะเบียนบน WhatsApp', desc:'ต้องไม่เคยถูกใช้กับบัญชี WhatsApp ใดมาก่อน หากเคยใช้ ให้ลบบัญชี WA จากแอปและรอ 24 ชั่วโมง', req:true},
+      {id:'p_phone_otp', label:'สามารถรับ OTP ผ่าน SMS หรือสายเสียงได้', desc:'ซิมที่ใช้งานได้จริง ยืนยันกับผู้ให้บริการโทรศัพท์ของคุณ ต้องรับสายได้ในช่วงติดตั้ง', req:true},
+      {id:'p_phone_dedicated', label:'เป็นเบอร์เฉพาะ (ไม่ใช่เบอร์ส่วนตัวหรือใช้ร่วมกัน)', desc:'แนะนำให้ใช้เพื่อผลลัพธ์ที่ดีที่สุด — หลีกเลี่ยงเบอร์ที่ใช้ร่วมกันหรือเบอร์ส่วนตัว', req:false},
+    ]},
+    {key:'connect', title:'⚙️ บัญชี 8x8 Connect', items:[
+      {id:'p_conn_created', label:'สร้างบัญชี 8x8 Connect แล้ว', desc:'บัญชีที่ใช้งานอยู่ที่ connect.8x8.com ติดต่อ CSM ของ 8x8 หากยังไม่ได้เปิดใช้งาน', req:true},
+      {id:'p_conn_feature', label:'เปิดใช้ฟีเจอร์ Messaging Apps ในพอร์ทัล', desc:'ควรมองเห็นได้ในบัญชี 8x8 Connect ของคุณ ติดต่อทีม 8x8 หากไม่เห็นฟีเจอร์นี้', req:true},
+      {id:'p_conn_admin', label:'มีสิทธิ์ Admin และเตรียม Subaccount', desc:'ต้องมีสิทธิ์ Admin เพื่อสร้างช่องทาง WA ใหม่ ช่องทางใหม่จะถูกจัดเตรียมภายใต้ Subaccount', req:true},
+    ]},
+    {key:'profile', title:'📋 ข้อมูลโปรไฟล์ธุรกิจ', items:[
+      {id:'p_prof_name', label:'มีชื่อธุรกิจที่จะแสดงผลพร้อมแล้ว', desc:'ชื่อธุรกิจของคุณที่จะแสดงบน WhatsApp ต้องเป็นไปตามแนวทางการตั้งชื่อของ Meta', req:true},
+      {id:'p_prof_desc', label:'คำอธิบายธุรกิจและหมวดหมู่', desc:'คำอธิบายสั้นๆ เกี่ยวกับธุรกิจของคุณ และหมวดหมู่อุตสาหกรรมสำหรับโปรไฟล์ WhatsApp', req:true},
+      {id:'p_prof_contact', label:'ที่อยู่ อีเมลติดต่อ และเว็บไซต์', desc:'ที่อยู่ธุรกิจและอีเมลที่เป็นทางการ URL เว็บไซต์และรูปโปรไฟล์เป็นตัวเลือกแต่แนะนำสำหรับการสมัคร OBA', req:true},
+    ]}
+  ],
+  migration: [
+    {key:'twofa', title:'🔐 2FA — ขั้นตอนสำคัญแรก', items:[
+      {id:'m_2fa_disabled', label:'ปิด 2FA โดย BSP เดิมบน WABA ของคุณแล้ว', desc:'ขอให้ BSP เดิม (Twilio, Vonage, Infobip ฯลฯ) ปิด Two-Step Verification บน WABA ID ของคุณใน Meta BM เมื่อปิดแล้ว ให้ดำเนินการต่อทันที', req:true, critical:true},
+      {id:'m_waba_info', label:'ยืนยัน WABA ID เบอร์โทร และชื่อที่แสดงผลเดิมแล้ว', desc:'เตรียม WABA ID เดิม เบอร์โทรศัพท์ที่ตรงกัน และชื่อที่แสดงผลที่อนุมัติแล้ว ก่อนเริ่ม Embedded Sign-Up', req:true},
+    ]},
+    {key:'fbm2', title:'🏢 Meta Business Portfolio', items:[
+      {id:'m_fbm_verified', label:'ยืนยัน Meta Business Portfolio ครบ 100%', desc:'ต้องยืนยันครบใน Meta Business Manager ใช้ BM เดิมจาก BSP เดิมได้เลย ไม่ต้องสร้างใหม่', req:true},
+      {id:'m_fbm_admin', label:'มีสิทธิ์ Admin ใน FBM', desc:'ต้องมีสิทธิ์ Admin เพื่อทำ Embedded Sign-Up และเลือก Meta Business Manager เดิม', req:true},
+      {id:'m_fbm_email', label:'มีอีเมลโดเมนบริษัทพร้อมใช้งาน', desc:'ใช้อีเมลบริษัท (name@company.com) สำหรับการยืนยันตัวตนของ Meta ไม่ใช่ Gmail หรือ Yahoo', req:true},
+    ]},
+    {key:'connect2', title:'⚙️ บัญชี 8x8 Connect', items:[
+      {id:'m_conn_created', label:'สร้างบัญชี 8x8 Connect แล้ว', desc:'บัญชีที่ใช้งานอยู่ที่ connect.8x8.com ติดต่อ CSM ของ 8x8 หากยังไม่ได้เปิดใช้งาน', req:true},
+      {id:'m_conn_feature', label:'เปิดใช้ฟีเจอร์ Messaging Apps แล้ว', desc:'ควรมองเห็นได้ในบัญชีของคุณ ติดต่อทีม 8x8 หากไม่เห็นฟีเจอร์นี้', req:true},
+      {id:'m_conn_admin', label:'มีสิทธิ์ Admin และเตรียม Subaccount', desc:'ช่องทางที่ย้ายมาจะถูกจัดเตรียมภายใต้ Subaccount ใน 8x8 Connect', req:true},
+    ]}
+  ]
+};
+
+function renderPrereqs(){
+  const container = document.getElementById('prereq-groups');
+  container.innerHTML = '';
+  PREREQ_DATA[selectedPath].forEach(group=>{
+    const div = document.createElement('div');
+    div.className = 'check-group';
+    const reqItems = group.items.filter(i=>i.req);
+    div.innerHTML = `
+      <div class="check-group-head"><span>${group.title}</span><span class="check-count" id="count-${group.key}">0 / ${group.items.length}</span></div>
+      ${group.items.map(item=>`
+        <div class="check-item">
+          <input type="checkbox" id="${item.id}" onchange="onCheck('${group.key}')" ${checked[item.id]?'checked':''}>
+          <div>
+            <label for="${item.id}" class="ttl">${item.label}${item.critical?'<span class="badge-crit">สำคัญ</span>':(item.req?'<span class="badge-req">จำเป็น</span>':'<span class="badge-rec">แนะนำ</span>')}</label>
+            <div class="dsc">${item.desc}</div>
+          </div>
+        </div>
+      `).join('')}
+      ${group.note?`<div class="callout" style="margin-top:12px;">${group.note}</div>`:''}
+    `;
+    container.appendChild(div);
+  });
+  PREREQ_DATA[selectedPath].forEach(g=>updateGroupCount(g.key, g.items));
+  evaluatePrereqUnlock();
+}
+
+function onCheck(groupKey){
+  const group = PREREQ_DATA[selectedPath].find(g=>g.key===groupKey);
+  group.items.forEach(i=>{ checked[i.id] = document.getElementById(i.id).checked; });
+  updateGroupCount(groupKey, group.items);
+  evaluatePrereqUnlock();
+}
+
+function updateGroupCount(key, items){
+  const c = items.filter(i=>checked[i.id]).length;
+  const el = document.getElementById('count-'+key);
+  if(el) el.textContent = `${c} / ${items.length}`;
+}
+
+function evaluatePrereqUnlock(){
+  const allGroups = PREREQ_DATA[selectedPath];
+  const allRequiredChecked = allGroups.every(g=>g.items.filter(i=>i.req).every(i=>checked[i.id]));
+  document.getElementById('btn-continue-2').disabled = !allRequiredChecked;
+  document.getElementById('prereq-lock').style.display = allRequiredChecked ? 'none' : 'block';
+}
+
+/* ---- Step 3: setup steps ---- */
+const SETUP_STEPS = {
+  new: [
+    {t:'สร้างเพจ Facebook และตั้งค่า Meta Business Portfolio', d:'Meta Business Portfolio คือ "บัญชีธุรกิจกลาง" ของ Meta ที่รวบรวมทรัพยากร WhatsApp ทั้งหมดของคุณไว้ในที่เดียว เช่น เพจ Facebook, ผู้ใช้ในทีม, และ WABA คุณต้องสร้างและยืนยันตัวตนให้ครบ 100% ก่อน จึงจะไปขั้นตอนที่ 2 ได้', meta:'~1 วัน · ต้องทำให้เสร็จก่อนขั้นตอนที่ 2'},
+    {t:'ยืนยันตัวตนธุรกิจ (Business Verification)', d:'ส่งเอกสารจดทะเบียนบริษัท เช่น หนังสือรับรองนิติบุคคล ใบทะเบียนภาษี หรือใบอนุญาตประกอบธุรกิจ ผ่าน Meta Business Manager → Security Center ทีม Meta จะตรวจสอบภายใน 1–3 วันทำการ เมื่อผ่านแล้วจะปลดล็อกโควตาส่งข้อความจาก 250 เป็น 2,000 ผู้ใช้ต่อวัน', meta:'1–3 วันทำการ · รอ Meta ตรวจสอบ'},
+    {t:'ทำ Embedded Sign-Up ผ่าน 8x8 Connect', d:'เข้าพอร์ทัล 8x8 Connect → เมนู Messaging Apps → กด Create WA Account แล้วทำตามขั้นตอน Embedded Sign-Up ให้ครบ: เชื่อมบัญชี Meta ของคุณ กรอกชื่อที่จะแสดงผล โปรไฟล์ธุรกิจ และเบอร์โทรศัพท์ จากนั้นยืนยันด้วย OTP ชื่อที่แสดงผลจะใช้เวลาตรวจสอบ 1–2 วันทำการ', meta:'~1–2 วัน · ทำใน 8x8 Connect', link:{href:'https://8x8.navattic.com/bt10aaf', label:'▶ คู่มืออินเทอร์แอกทีฟการ Sign-Up →'}},
+    {t:'สร้าง-ส่งเทมเพลตข้อความ และเชื่อมต่อ API', d:'สร้างเทมเพลตข้อความ 3 หมวด (Auth, Utility, Marketing) ใน 8x8 Connect ระบบ AI ของ Meta จะตรวจสอบและอนุมัติภายในไม่กี่นาทีถึงไม่กี่ชั่วโมง จากนั้นเชื่อมต่อ 8x8 API เข้าระบบของคุณ และทดสอบแบบ end-to-end (UAT) ให้ครบ', meta:'ไม่กี่นาที–ชั่วโมง · รออนุมัติเทมเพลต', link:{href:'https://developer.8x8.com/connect/docs/whatsapp-templates-management', label:'📄 คู่มือจัดการเทมเพลต →'}},
+    {t:'🎉 ไปใช้งานจริง (Go Live)!', d:'เปิดใช้ 2FA และทดสอบส่งข้อความจริงอีกครั้ง แล้วคุณก็พร้อมใช้งานได้เลย! หลังจากนี้ให้ติดตามคะแนนคุณภาพและการส่งข้อความผ่าน 8x8 Connect และ Meta Business Manager อย่างต่อเนื่อง และสามารถสมัคร OBA (Blue Tick) ได้เมื่อใช้งานจริงครบ 30 วัน', meta:'ไปใช้งานจริง!', isLast:true},
+  ],
+  migration: [
+    {t:'ขอให้ BSP เดิมปิด 2FA', d:'ติดต่อ BSP เดิมของคุณ (Twilio, Vonage, Infobip ฯลฯ) และขอให้ปิด 2FA บน WABA ของคุณใน Meta BM ของพวกเขา บอกพวกเขาว่า: "กรุณาปิด 2FA/การยืนยันสองขั้นตอนบน WABA ID [WABA ID ของคุณ] เพื่อให้เราดำเนินการย้ายระบบได้" เมื่อปิดแล้ว ให้ดำเนินการต่อทันที', meta:'สำคัญ — ต้องทำก่อน'},
+    {t:'เข้าสู่ 8x8 Connect และเริ่ม Embedded Sign-Up', d:'ไปที่ connect.8x8.com → Messaging Apps → Create WhatsApp Account เริ่มขั้นตอน Embedded Sign-Up', meta:'8x8 Connect'},
+    {t:'เลือก Meta Business Manager เดิม', d:'เมื่อระบบขึ้นให้เข้าสู่ระบบด้วยบัญชี Facebook Admin และเลือก Meta Business Manager เดิม ที่ WABA ของคุณอยู่ในปัจจุบัน อย่าสร้างใหม่', meta:'⚠ ใช้ BM เดิม — ไม่ใช่สร้างใหม่'},
+    {t:'สร้าง WABA ใหม่', d:'เมื่อระบบให้เลือก ให้เลือก "สร้าง WABA ใหม่" WABA แต่ละรายการเชื่อมกับ BSP ได้ทีละหนึ่งเท่านั้น กรอกชื่อที่แสดงผลและโปรไฟล์ เทมเพลตและคะแนนคุณภาพถูกจัดเก็บที่ระดับเบอร์โทรศัพท์และจะติดไปกับเบอร์'},
+    {t:'กรอกเบอร์โทรศัพท์เดิม', d:'กรอกเบอร์เดียวกับที่ใช้กับ WABA เดิมของคุณ ระบบจะแจ้งว่า "เบอร์นี้เชื่อมต่อกับ WhatsApp Business อยู่แล้ว" — เป็นเรื่องปกติ ให้ดำเนินการต่อและอย่ายกเลิก', meta:'⚠ เป็นเรื่องปกติ — อย่ายกเลิก'},
+    {t:'ยืนยันและตรวจสอบผ่าน OTP', d:'ดำเนินการต่อผ่านการแจ้งเตือนและยืนยัน ระบบจะส่ง OTP ไปยังเบอร์โทรศัพท์ผ่าน SMS หรือสายเสียง ขั้นนี้จะทำให้เบอร์ย้ายจาก BSP เดิมมายัง 8x8'},
+    {t:'ตั้งค่าให้เสร็จสมบูรณ์และเลือก Subaccount', d:'ทำการตั้งค่าที่เหลือใน 8x8 Connect ให้เสร็จ — เลือก Subaccount และยืนยันขั้นสุดท้าย ตอนนี้เบอร์ของคุณใช้งานได้บน 8x8 แล้ว'},
+    {t:'เปิดใช้ 2FA อีกครั้งฝั่ง 8x8', d:'เมื่อการย้ายเสร็จสมบูรณ์แล้ว ให้เปิดใช้ 2FA อีกครั้งจาก Meta BM → WhatsApp Manager → Settings ควรเปิดใช้ทุกครั้งหลังยืนยันว่าการย้ายเสร็จสมบูรณ์และใช้งานได้จริง', meta:'🔒 สำคัญ — มีความเสี่ยงด้านความปลอดภัยหากไม่เปิดใช้'},
+    {t:'🎉 ตรวจสอบและไปใช้งานจริง!', d:'ส่งข้อความทดสอบเพื่อยืนยันว่าทุกอย่างทำงานได้บน 8x8 ตรวจสอบเทมเพลต ข้อมูลรับรอง API และ webhook endpoint ว่าชี้ไปที่ 8x8 ทั้งหมด เทมเพลตที่อนุมัติแล้วและคะแนนคุณภาพเดิมจะติดมาด้วย', meta:'ไปใช้งานจริง!', isLast:true},
+  ]
+};
+
+function renderSetupSteps(){
+  const container = document.getElementById('setup-steps');
+  container.innerHTML = '';
+  if(selectedPath==='migration'){
+    const note = document.createElement('div');
+    note.className = 'callout critical';
+    note.innerHTML = '🚨 <b>ขั้นตอนที่ 1 สำคัญที่สุด</b> การย้าย WABA ใช้ขั้นตอน Embedded Sign-Up เดียวกันกับการเปิดใช้งานใหม่ — ความแตกต่างหลักคือ การเลือก Meta BM เดิม การสร้าง WABA ใหม่ และการกรอกเบอร์โทรศัพท์เดิม';
+    container.appendChild(note);
+  }
+  SETUP_STEPS[selectedPath].forEach((s,idx)=>{
+    const div = document.createElement('div');
+    div.className = 'setup-step';
+    div.innerHTML = `
+      <div class="num">${s.isLast?'✓':idx+1}</div>
+      <div>
+        <h4>${s.t}</h4>
+        <div>${s.d}</div>
+        <div class="meta">${s.meta}${s.link?` · <a href="${s.link.href}" target="_blank">${s.link.label}</a>`:''}</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+/* ---- Step 5: blockers ---- */
+const BLOCKERS = {
+  new: [
+    {t:'FBM ยังไม่ผ่านการยืนยัน', d:'Meta Business Portfolio ยังไม่สมบูรณ์หรืออยู่ระหว่างพิจารณา คุณจะไม่สามารถดำเนินการต่อได้จนกว่าจะยืนยันครบ 100%', fix:'ไปที่ Meta Business Manager → Security Center → Start Verification ใช้อีเมลโดเมนบริษัท เตรียม: หนังสือรับรองนิติบุคคล, ใบทะเบียนภาษี, ใบอนุญาตประกอบธุรกิจ ใช้เวลาตรวจสอบ 1–3 วันทำการ'},
+    {t:'เบอร์โทรศัพท์ลงทะเบียนบน WhatsApp อยู่แล้ว', d:'เบอร์นี้เชื่อมกับบัญชี WhatsApp ที่มีอยู่แล้ว ทำให้การยืนยัน OTP ถูกบล็อก', fix:'ตัวเลือก A: ลบบัญชี WA ที่มีอยู่จากแอปก่อน แล้วรอ 24 ชั่วโมง ตัวเลือก B: ใช้เบอร์ใหม่ที่ยังไม่เคยลงทะเบียน'},
+    {t:'ชื่อที่แสดงผล "อยู่ระหว่างตรวจสอบ" นานกว่า 2 วัน', d:'การตรวจสอบชื่อที่แสดงผลของ Meta ปกติใช้เวลา 1–2 วันทำการ หากนานกว่านั้นต้องยกระดับการแจ้งปัญหา', fix:'เปิดตั๋ว Meta Direct Support พร้อมระบุ: WABA ID, เบอร์โทรศัพท์, วันที่สมัคร และหมวดหมู่ธุรกิจ'},
+    {t:'ไม่ได้รับ OTP', d:'ตรวจสอบว่าเบอร์ยังใช้งานอยู่ ยืนยันกับผู้ให้บริการโทรศัพท์ ลองสลับระหว่าง OTP แบบ SMS และสายเสียง', fix:''},
+    {t:'เทมเพลตถูกปฏิเสธหรือถูกจัดหมวดใหม่เป็น Marketing', d:'เทมเพลตถูกปฏิเสธ หรือ AI ของ Meta จัดหมวดใหม่จาก Utility เป็น Marketing ซึ่งกระทบต่อราคา', fix:'ตรวจสอบภาษาที่อาจดูเป็นการโฆษณา คุณมีเวลา 60 วันในการอุทธรณ์การจัดหมวดใหม่ผ่าน Meta Business Manager'},
+  ],
+  migration: [
+    {t:'BSP เดิมยังไม่ปิด 2FA', d:'สาเหตุการย้ายล้มเหลวที่พบบ่อยที่สุด หากยังเปิด 2FA อยู่ การยืนยัน OTP จะล้มเหลวและการย้ายจะไม่สำเร็จ', fix:'ประสานงานกับ BSP เดิมอีกครั้ง เมื่อปิดแล้วให้ดำเนินการต่อทันที — บาง BSP อาจเปิดกลับมาอัตโนมัติ'},
+    {t:'ไม่ได้รับ OTP ระหว่างการย้าย', d:'OTP ถูกส่งไปยังเบอร์ที่กำลังย้าย อาจเป็นปัญหาจากผู้ให้บริการโทรศัพท์หรือเบอร์ไม่ได้ใช้งานชั่วคราว', fix:'ยืนยันว่าเบอร์ยังใช้งานอยู่ ลองสลับระหว่าง OTP แบบ SMS และสายเสียง ตรวจสอบกับผู้ให้บริการโทรศัพท์'},
+    {t:'Meta Business Portfolio ยังไม่ผ่านการยืนยัน', d:'ขั้นตอนการย้ายจะถูกบล็อกตอนเชื่อมบัญชี Meta หาก BM ยังไม่ยืนยันครบ 100%', fix:'ไปที่ Meta BM → Security Center → Start Verification เตรียมหนังสือรับรองนิติบุคคลและเอกสารภาษี'},
+    {t:'ชื่อที่แสดงผลไม่ตรงกันหลังย้ายระบบ', d:'ชื่อที่แสดงผลใน 8x8 Connect แตกต่างจากที่ปรากฏใน Meta BM', fix:'ติดต่อทีมซัพพอร์ตของ 8x8 พร้อมระบุ WABA ID, Channel ID, ชื่อที่แสดงผลที่ถูกต้อง และเบอร์โทรศัพท์'},
+    {t:'เทมเพลตหายไปหลังย้ายระบบ', d:'เทมเพลตที่อนุมัติแล้วอาจใช้เวลาสักครู่ก่อนปรากฏใน 8x8 Connect หลังการย้าย', fix:'รอ 15–30 นาทีแล้วรีเฟรชหน้า Templates หากยังไม่ปรากฏหลัง 1 ชั่วโมง ติดต่อทีมซัพพอร์ต 8x8 พร้อม WABA ID'},
+  ]
+};
+
+function renderBlockers(){
+  const container = document.getElementById('blockers');
+  container.innerHTML = BLOCKERS[selectedPath].map(b=>`
+    <div class="callout" style="background:#fff8ec;">
+      <b>⚠ ${b.t}</b><br>${b.d}
+      ${b.fix?`<br><br><b>วิธีแก้ไข:</b> ${b.fix}`:''}
+    </div>
+  `).join('');
+}
+
+/* ---- Step 6: FAQ ---- */
+const FAQ = [
+  {q:'ใช้เบอร์ WhatsApp เดิมกับ API ได้ไหม?', a:'ได้ — แต่ต้องผ่านขั้นตอนการย้ายระบบ BSP เดิมของคุณต้องปิด 2FA บน WABA ก่อนจึงจะเริ่มการย้ายฝั่ง 8x8 ได้ เมื่อทำแล้ว การย้ายมักเสร็จภายในวันเดียวกัน เบอร์ใหม่ที่ยังไม่เคยลงทะเบียนคือทางที่ราบรื่นที่สุดสำหรับการเปิดใช้งานใหม่'},
+  {q:'เบอร์โทรศัพท์จะเปลี่ยนไหมระหว่างการย้ายระบบ?', a:'ไม่ — เบอร์โทรศัพท์ของคุณจะเหมือนเดิม นี่คือข้อดีหลักของการย้ายระบบเทียบกับการเปิดใช้งานใหม่ ลูกค้าของคุณจะยังคงเห็นและทักเบอร์เดิมได้'},
+  {q:'เทมเพลตที่อนุมัติแล้วจะยังใช้ได้หลังย้ายระบบไหม?', a:'ได้ — เทมเพลตถูกจัดเก็บที่ระดับ WABA ใน Meta ไม่ใช่ที่ระดับ BSP เทมเพลตที่อนุมัติแล้วจะย้ายมาโดยอัตโนมัติและควรปรากฏใน 8x8 Connect ภายใน 15–30 นาทีหลังการย้ายเสร็จสมบูรณ์'},
+  {q:'จะมี Downtime ระหว่างการย้ายระบบไหม?', a:'ปกติจะมีการหยุดชะงักช่วงสั้นๆ ระหว่างขั้นตอนยืนยัน OTP การเปลี่ยนระบบจริงใช้เวลาเพียงไม่กี่นาที เราแนะนำให้ทำการย้ายในช่วงเวลาที่มีการใช้งานน้อย เพื่อลดผลกระทบต่อลูกค้า'},
+  {q:'Tier และคะแนนคุณภาพจะยกมาด้วยไหม?', a:'ได้ — ทั้ง Tier การส่งข้อความและคะแนนคุณภาพผูกกับ WABA ที่ระดับ Meta และจะติดมาที่ 8x8 หลังการย้าย คุณไม่ต้องเริ่มใหม่จาก Tier 1'},
+  {q:'ถ้า BSP เดิมไม่ยอมปิด 2FA ล่ะ?', a:'คุณสามารถเปิดตั๋วซัพพอร์ตกับ Meta โดยตรงเพื่อขอให้ถอด 2FA ได้ ในบางกรณี Meta อนุญาตให้เจ้าของ WABA ปิด 2FA ได้เองจาก Meta BM → WhatsApp Manager → Settings ติดต่อทีม 8x8 หากต้องการความช่วยเหลือในการยกระดับปัญหา'},
+  {q:'จะเพิ่มจำนวนเทมเพลตเกินขีดจำกัด 250 ได้อย่างไร?', a:'ค่าเริ่มต้นคือ 250 เทมเพลตต่อ WABA การได้สถานะ OBA (Blue Tick) จะปลดล็อกได้ถึง 6,000 เทมเพลตต่อ WABA นอกจากนี้ การลบเทมเพลตที่ไม่ได้ใช้ ถูกปฏิเสธ หรือถูกพักใช้เป็นประจำ ก็ช่วยเพิ่มพื้นที่ในขีดจำกัดปัจจุบันได้'},
+  {q:'ส่งข้อความได้โดยไม่ใช้เทมเพลตหรือไม่?', a:'ได้ — แต่เฉพาะภายในช่วงเวลาบริการลูกค้า 24 ชั่วโมง หลังจากลูกค้าทักมาก่อน นอกช่วง 24 ชั่วโมง จะใช้ได้เฉพาะเทมเพลตที่ได้รับอนุมัติแล้วเท่านั้น เทมเพลต Utility ที่ส่งในช่วงเวลานี้ก็ไม่มีค่าใช้จ่ายเช่นกัน'},
+  {q:'OBA (Blue Tick) คืออะไร และสมัครอย่างไร?', a:'OBA (Official Business Account) คือเครื่องหมายยืนยันของ WhatsApp — ติ๊กสีฟ้าข้างชื่อธุรกิจของคุณ ช่วยสร้างความน่าเชื่อถือและเพิ่มอัตราการเปิดอ่าน พร้อมปลดล็อกขีดจำกัดเทมเพลตจาก 250 เป็น 6,000 ต่อ WABA สมัครได้ 30 วันหลังไปใช้งานจริง ผ่าน Meta BM → WhatsApp Manager → OBA ใช้เวลาตรวจสอบ 2 วันทำการถึงหลายสัปดาห์'},
+];
+
+function renderFAQ(){
+  const container = document.getElementById('faq');
+  container.innerHTML = FAQ.map((f,i)=>`
+    <div class="faq-item" id="faq-${i}">
+      <div class="faq-q" onclick="toggleFaq(${i})"><span>${f.q}</span><span>▾</span></div>
+      <div class="faq-a">${f.a}</div>
+    </div>
+  `).join('');
+}
+function toggleFaq(i){
+  const item = document.getElementById('faq-'+i);
+  const a = item.querySelector('.faq-a');
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open', !isOpen);
+  a.style.maxHeight = isOpen ? '0px' : a.scrollHeight+'px';
+}
+
+/* init */
+selectPath('new');
+renderFAQ();
+renderStepper();
+updateProgress();
+</script>
+</body>
+</html>
